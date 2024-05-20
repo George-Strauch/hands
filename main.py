@@ -24,17 +24,20 @@ class InterfaceInput:
 
     def do_action(self, hand_state, animator):
         hand_state.action = "0"
+        move_thresh = 0.06
         if len(hand_state.history) < 5:
             return
 
         direction = hand_state.state["index_direction_vector"]
-        direction_norm = direction / np.linalg.norm(direction)
-        acc = 20 * np.mean([np.linalg.norm(x["index_direction_vector"]) for x in hand_state.history[-5:]]) * 2/np.mean([np.linalg.norm(x["index_direction_vector_derivative"]) for x in hand_state.history[-5:]])
+        norm = np.linalg.norm(direction)
+        direction_norm = direction / norm
+
+        acc = (max(norm-move_thresh, 0)*45)**2
         a = time.time()
 
         # condition to move
-        print("norm ", np.linalg.norm(direction))
-        if hand_state.state["finger_tip_mad"] > GRAB_MAD and np.linalg.norm(direction) > 0.11:
+        print("-"*round(20*np.linalg.norm(direction)))
+        if hand_state.state["finger_tip_mad"] > GRAB_MAD and np.linalg.norm(direction) > 0:
             direction = [direction_norm[0]*acc, direction_norm[1]*acc]
             # direction = [1, 0]
             # print("MOVEMENT DIRECTION:", direction)
