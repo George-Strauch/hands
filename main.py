@@ -155,7 +155,6 @@ class HandState:
             "index_direction_vector_derivative": (vector - self.history[-1]["index_direction_vector"])/self.delta_t
             if len(self.history) > 0 else np.zeros(2),
         }
-
         info["jerk"] = np.linalg.norm((info["index_direction_vector_derivative"] - (self.history[-2]["index_direction_vector_derivative"] if len(self.history) > 2 else np.zeros(2))) / self.delta_t)
         return info
 
